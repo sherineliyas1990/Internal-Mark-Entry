@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI } from '@google/genai';
 
@@ -128,19 +129,20 @@ app.post('/api/gemini/class-summary', async (req, res) => {
   }
 });
 
-// Serve frontend in production / Vite middleware in dev
-if (process.env.NODE_ENV !== 'production') {
+// Serve frontend: use Vite middleware in dev or if dist doesn't exist yet
+const distPath = path.join(__dirname, 'dist');
+if (process.env.NODE_ENV === 'production' && fs.existsSync(path.join(distPath, 'index.html'))) {
+  app.use(express.static(distPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+} else {
   const { createServer: createViteServer } = await import('vite');
   const vite = await createViteServer({
     server: { middlewareMode: true },
     appType: 'spa',
   });
   app.use(vite.middlewares);
-} else {
-  app.use(express.static(path.join(__dirname, 'dist')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-  });
 }
 
 const PORT = 3000;
