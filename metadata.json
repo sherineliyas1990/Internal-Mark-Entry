@@ -1,0 +1,6 @@
+{
+  "name": "UniGrade - University Professor & Student Mark Portal",
+  "description": "Secure internal mark entry portal for university professors to manage and upload student grades with analytics, AI feedback assistant, and student grade viewing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
